@@ -1,37 +1,17 @@
-import { type } from "os"
-import { Entity, BaseEntity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn } from "typeorm"
+
+import { Entity, Column, OneToMany, ManyToMany, Double } from "typeorm"
+import { Person } from "./utils/Person"
+import {Transaction} from "./Transaction"
+import { Banker } from "./Banker"
 
 @Entity('client' // -> table name
 )
-export class Client extends BaseEntity {
+export class Client extends Person {
     
-    @PrimaryColumn()
-    id!: number 
-
-    @Column()
-    first_name!: string
-    
-    @Column()
-    last_name!: string
-
-    @Column({
-        
-        unique: true
-    })
-    email! : string 
-
-    @Column({
-        unique: true,
-        length: 10
-    })
-    card_number! : string
-
-    @Column(
-        {
-            type:"numeric"
-        }
-    )
-    account_balance! : number 
+   @Column({
+       type: "numeric"
+   })
+   balance!: number
 
     @Column({
         type: "boolean",
@@ -50,6 +30,16 @@ export class Client extends BaseEntity {
         mother_name: string
     }
 
+    @OneToMany(
+        ()=> Transaction,
+        transaction => transaction.client
+    )
+    transactions!: Transaction[]
+
+    @ManyToMany(
+        () => Banker
+    )
+    bankers!: Banker
     @Column({
         type: "simple-array",
         nullable: true,
@@ -57,9 +47,5 @@ export class Client extends BaseEntity {
     })
     countries_visited! : string
 
-    @CreateDateColumn()
-    create_at!: Date 
     
-    @UpdateDateColumn()
-    updated_at!: Date
 }
